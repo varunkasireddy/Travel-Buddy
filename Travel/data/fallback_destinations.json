@@ -1,0 +1,182 @@
+[
+  {
+    "name": { "common": "France" },
+    "cca2": "FR",
+    "region": "Europe",
+    "subregion": "Western Europe",
+    "population": 67391582,
+    "capital": ["Paris"],
+    "latlng": [46.0, 2.0]
+  },
+  {
+    "name": { "common": "Japan" },
+    "cca2": "JP",
+    "region": "Asia",
+    "subregion": "Eastern Asia",
+    "population": 125836021,
+    "capital": ["Tokyo"],
+    "latlng": [36.0, 138.0]
+  },
+  {
+    "name": { "common": "United States" },
+    "cca2": "US",
+    "region": "North America",
+    "subregion": "North America",
+    "population": 329484123,
+    "capital": ["Washington, D.C."],
+    "latlng": [38.0, -97.0]
+  },
+  {
+    "name": { "common": "Italy" },
+    "cca2": "IT",
+    "region": "Europe",
+    "subregion": "Southern Europe",
+    "population": 59554023,
+    "capital": ["Rome"],
+    "latlng": [42.83333333, 12.83333333]
+  },
+  {
+    "name": { "common": "Spain" },
+    "cca2": "ES",
+    "region": "Europe",
+    "subregion": "Southern Europe",
+    "population": 47351567,
+    "capital": ["Madrid"],
+    "latlng": [40.0, -4.0]
+  },
+  {
+    "name": { "common": "Australia" },
+    "cca2": "AU",
+    "region": "Oceania",
+    "subregion": "Australia and New Zealand",
+    "population": 25687041,
+    "capital": ["Canberra"],
+    "latlng": [-27.0, 133.0]
+  },
+  {
+    "name": { "common": "Brazil" },
+    "cca2": "BR",
+    "region": "South America",
+    "subregion": "South America",
+    "population": 212559409,
+    "capital": ["Brasília"],
+    "latlng": [-10.0, -55.0]
+  },
+  {
+    "name": { "common": "Egypt" },
+    "cca2": "EG",
+    "region": "Africa",
+    "subregion": "Northern Africa",
+    "population": 102334403,
+    "capital": ["Cairo"],
+    "latlng": [27.0, 30.0]
+  },
+  {
+    "name": { "common": "Thailand" },
+    "cca2": "TH",
+    "region": "Asia",
+    "subregion": "South-Eastern Asia",
+    "population": 69799978,
+    "capital": ["Bangkok"],
+    "latlng": [15.0, 100.0]
+  },
+    {
+    "name": { "common": "Germany" },
+    "cca2": "DE",
+    "region": "Europe",
+    "subregion": "Western Europe",
+    "population": 83240525,
+    "capital": ["Berlin"],
+    "latlng": [51.0, 9.0]
+  },
+  {
+    "name": { "common": "United Kingdom" },
+    "cca2": "GB",
+    "region": "Europe",
+    "subregion": "Northern Europe",
+    "population": 67215293,
+    "capital": ["London"],
+    "latlng": [54.0, -2.0]
+  },
+  {
+    "name": { "common": "Canada" },
+    "cca2": "CA",
+    "region": "North America",
+    "subregion": "North America",
+    "population": 38005238,
+    "capital": ["Ottawa"],
+    "latlng": [60.0, -95.0]
+  },
+  {
+    "name": { "common": "South Africa" },
+    "cca2": "ZA",
+    "region": "Africa",
+    "subregion": "Southern Africa",
+    "population": 59308690,
+    "capital": ["Pretoria"],
+    "latlng": [-29.0, 24.0]
+  },
+  {
+    "name": { "common": "India" },
+    "cca2": "IN",
+    "region": "Asia",
+    "subregion": "Southern Asia",
+    "population": 1380004385,
+    "capital": ["New Delhi"],
+    "latlng": [20.0, 77.0]
+  },
+  {
+    "name": { "common": "Mexico" },
+    "cca2": "MX",
+    "region": "North America",
+    "subregion": "North America",
+    "population": 128932753,
+    "capital": ["Mexico City"],
+    "latlng": [23.0, -102.0]
+  },
+  {
+    "name": { "common": "Argentina" },
+    "cca2": "AR",
+    "region": "South America",
+    "subregion": "South America",
+    "population": 45376763,
+    "capital": ["Buenos Aires"],
+    "latlng": [-34.0, -64.0]
+  },
+  {
+    "name": { "common": "New Zealand" },
+    "cca2": "NZ",
+    "region": "Oceania",
+    "subregion": "Australia and New Zealand",
+    "population": 5084300,
+    "capital": ["Wellington"],
+    "latlng": [-42.0, 174.0]
+  },
+  {
+    "name": { "common": "Kenya" },
+    "cca2": "KE",
+    "region": "Africa",
+    "subregion": "Eastern Africa",
+    "population": 53771300,
+    "capital": ["Nairobi"],
+    "latlng": [1.0, 38.0]
+  },
+  {
+    "name": { "common": "Vietnam" },
+    "cca2": "VN",
+    "region": "Asia",
+    "subregion": "South-Eastern Asia",
+    "population": 97338583,
+    "capital": ["Hanoi"],
+    "latlng": [16.0, 106.0]
+  },
+  {
+    "name": { "common": "Turkey" },
+    "cca2": "TR",
+    "region": "Asia",
+    "subregion": "Western Asia",
+    "population": 84339067,
+    "capital": ["Ankara"],
+    "latlng": [39.0, 35.0]
+  }
+]

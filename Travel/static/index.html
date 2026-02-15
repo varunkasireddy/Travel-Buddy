@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Buddy - Destination Finder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="min-h-screen">
+        <!-- Navigation -->
+        <nav class="bg-white shadow-sm">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16 items-center">
+                    <a href="/" class="flex items-center hover:opacity-80 transition-opacity">
+                        <i class="fas fa-plane-departure text-indigo-600 text-2xl mr-2"></i>
+                        <span class="text-xl font-bold text-gray-800">TravelBuddy</span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <header class="bg-indigo-700 py-12 px-4 sm:px-6 lg:px-8 text-center text-white">
+            <h1 class="text-4xl font-extrabold tracking-tight sm:text-5xl">Your Next Adventure Starts Here</h1>
+            <p class="mt-4 text-xl text-indigo-100">AI-powered travel recommendations tailored to your budget and style.</p>
+        </header>
+
+        <!-- Main Content -->
+        <main class="max-w-4xl mx-auto -mt-10 px-4 pb-12">
+            <div class="bg-white rounded-xl shadow-lg p-6 sm:p-8">
+                <form id="recommendation-form" class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="continent" class="block text-sm font-medium text-gray-700">Where do you want to go?</label>
+                            <select id="continent" name="continent" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border" required>
+                                <option value="">Select Continent</option>
+                                <option value="Africa">Africa</option>
+                                <option value="Asia">Asia</option>
+                                <option value="Europe">Europe</option>
+                                <option value="North America">North America</option>
+                                <option value="South America">South America</option>
+                                <option value="Oceania">Oceania</option>
+                            </select>
+                        </div>
+
+                        <div class="relative">
+                            <label for="origin_city" class="block text-sm font-medium text-gray-700">Departure City</label>
+                            <div class="mt-1 relative rounded-md shadow-sm">
+                                <div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                                    <i class="fas fa-search text-gray-400"></i>
+                                </div>
+                                <input type="text" id="origin_city" name="origin_city" autocomplete="off" placeholder="Search city (e.g. London)" class="block w-full rounded-md border-gray-300 pl-10 focus:border-indigo-500 focus:ring-indigo-500 p-2 border" required>
+                                <div id="city-search-spinner" class="hidden absolute inset-y-0 right-0 flex items-center pr-3">
+                                    <i class="fas fa-circle-notch fa-spin text-indigo-500"></i>
+                                </div>
+                            </div>
+                            <!-- Dropdown Results -->
+                            <div id="city-results" class="hidden absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+                            </div>
+                            <!-- Selection Lock Display -->
+                            <div id="selected-city-display" class="hidden mt-2 flex items-center justify-between p-2 bg-indigo-50 rounded border border-indigo-200">
+                                <div class="flex items-center">
+                                    <i class="fas fa-check-circle text-indigo-600 mr-2"></i>
+                                    <span id="selected-city-name" class="font-bold text-indigo-900">City Name</span>
+                                    <span id="selected-city-code" class="ml-2 text-xs bg-white px-2 py-0.5 rounded border border-indigo-200 text-indigo-600 font-mono">CODE</span>
+                                </div>
+                                <button type="button" onclick="clearCitySelection()" class="text-gray-400 hover:text-red-500 transition-colors">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="budget" class="block text-sm font-medium text-gray-700">Budget</label>
+                            <div class="mt-1 flex rounded-md shadow-sm">
+                                <select id="currency" name="currency" class="inline-flex items-center rounded-l-md border border-r-0 border-gray-300 bg-gray-50 px-3 text-gray-500 sm:text-sm">
+                                    <option value="USD">USD</option>
+                                    <option value="EUR">EUR</option>
+                                    <option value="GBP">GBP</option>
+                                    <option value="JPY">JPY</option>
+                                </select>
+                                <input type="number" id="budget" name="budget" placeholder="e.g. 2000" class="block w-full flex-1 rounded-none rounded-r-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 p-2 border" required>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label for="dates" class="block text-sm font-medium text-gray-700">Travel Date</label>
+                            <input type="date" id="dates" name="dates" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border" required>
+                        </div>
+
+                        <div>
+                            <label for="days" class="block text-sm font-medium text-gray-700">Duration (Days)</label>
+                            <input type="number" id="days" name="days" placeholder="e.g. 7" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border" required>
+                        </div>
+
+                        <div>
+                            <label for="people" class="block text-sm font-medium text-gray-700">People Count</label>
+                            <input type="number" id="people" name="people" placeholder="e.g. 2" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 p-2 border" required>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-center">
+                        <button type="submit" class="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors">
+                            Find My Destination
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Loading System UI -->
+            <div id="loading" class="hidden mt-12 max-w-2xl mx-auto">
+                <div class="mb-2 flex justify-between text-sm font-medium text-gray-700">
+                    <span>System Status</span>
+                    <span id="progress-percent">0%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5 mb-6">
+                    <div id="progress-bar" class="bg-indigo-600 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+                
+                <!-- Terminal Box -->
+                <div class="bg-gray-900 rounded-lg shadow-xl overflow-hidden border border-gray-700 font-mono text-xs sm:text-sm">
+                    <div class="bg-gray-800 px-4 py-2 flex items-center gap-2 border-b border-gray-700">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                        <span class="ml-2 text-gray-400">Analysing..</span>
+                    </div>
+                    <div id="cmd-output" class="p-4 h-48 overflow-y-auto text-green-400 space-y-1">
+                        <!-- Logs injected here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Section -->
+            <div id="results" class="hidden mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Recommendations will be injected here -->
+            </div>
+
+            <!-- Technical Details View (Hidden by default) -->
+            <div id="details-view" class="hidden mt-12 bg-white rounded-xl shadow-lg overflow-hidden">
+                <div class="bg-indigo-700 px-6 py-4 flex justify-between items-center">
+                    <h2 class="text-2xl font-bold text-white flex items-center">
+                        <i class="fas fa-microchip mr-3"></i> Recommendation Logic
+                    </h2>
+                    <button onclick="hideDetails()" class="text-indigo-100 hover:text-white transition-colors">
+                        <i class="fas fa-times text-2xl"></i>
+                    </button>
+                </div>
+                
+                <div class="p-8">
+                    <div class="flex flex-col md:flex-row justify-between mb-8 border-b pb-6">
+                        <div>
+                            <h3 id="detail-city" class="text-3xl font-extrabold text-gray-900">City Name</h3>
+                            <p id="detail-country" class="text-xl text-indigo-600 font-medium mt-1">Country</p>
+                        </div>
+                        <div class="mt-4 md:mt-0 text-right">
+                            <div class="inline-flex items-center justify-center p-4 bg-indigo-50 rounded-lg">
+                                <div class="text-center">
+                                    <span class="block text-sm text-gray-500 uppercase tracking-wide font-semibold">Suitability Score</span>
+                                    <span id="detail-score" class="text-4xl font-extrabold text-indigo-700">95.4%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <!-- Safety Analysis -->
+                        <div class="bg-gray-50 p-6 rounded-lg border border-gray-100">
+                            <h4 class="text-lg font-bold text-gray-800 mb-3"><i class="fas fa-shield-alt text-green-500 mr-2"></i>Safety Vector</h4>
+                            <p class="text-sm text-gray-600 mb-2">Raw Advisory Score: <span id="detail-safety-raw" class="font-mono font-bold text-gray-900">0.0</span> (Lower is better)</p>
+                            <p class="text-sm text-gray-600 mb-4">Normalized Score: <span id="detail-safety-norm" class="font-mono font-bold text-gray-900">4.5/5</span></p>
+                            <div class="text-xs text-gray-500 italic bg-white p-2 rounded">
+                                "Weighted at 40%. Sourced directly from Travel Advisory API."
+                            </div>
+                        </div>
+
+                        <!-- Cost Analysis -->
+                        <div class="bg-gray-50 p-6 rounded-lg border border-gray-100">
+                            <h4 class="text-lg font-bold text-gray-800 mb-3"><i class="fas fa-coins text-yellow-500 mr-2"></i>Cost Analysis</h4>
+                            <p class="text-sm text-gray-600 mb-2">Est. Total Cost: <span id="detail-cost" class="font-mono font-bold text-gray-900">$0</span></p>
+                            <p class="text-sm text-gray-600 mb-4">Budget Utilization: <span id="detail-budget-use" class="font-mono font-bold text-gray-900">80%</span></p>
+                            <div class="space-y-1 text-xs text-gray-500 bg-white p-2 rounded border border-gray-100">
+                                <div class="flex justify-between"><span>Flight (ML Est):</span> <span id="detail-cost-flight" class="font-mono font-medium"></span></div>
+                                <div class="flex justify-between"><span>Living (Daily):</span> <span id="detail-cost-daily" class="font-mono font-medium"></span></div>
+                            </div>
+                        </div>
+
+                        <!-- Weather Analysis -->
+                        <div class="bg-gray-50 p-6 rounded-lg border border-gray-100">
+                            <h4 class="text-lg font-bold text-gray-800 mb-3"><i class="fas fa-cloud-sun text-blue-500 mr-2"></i>Climate Fit</h4>
+                            <p class="text-sm text-gray-600 mb-2">Forecast: <span id="detail-weather-desc" class="font-mono font-bold text-gray-900">Sunny</span></p>
+                            <p class="text-sm text-gray-600 mb-4">Deviation from Ideal (25°C): <span id="detail-weather-dev" class="font-mono font-bold text-gray-900">2.5°C</span></p>
+                            <div class="text-xs text-gray-500 italic bg-white p-2 rounded">
+                                "Weighted at 20%. Penalizes deviation from ideal travel temperature."
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Technical Details Row -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+                        <div class="bg-gray-900 text-green-400 p-4 rounded-lg font-mono text-xs overflow-hidden">
+                            <h4 class="text-white font-bold mb-2 uppercase tracking-wider border-b border-gray-700 pb-1">Geospatial Data</h4>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <span class="text-gray-500">LATITUDE</span><br>
+                                    <span id="detail-geo-lat">0.0000</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-500">LONGITUDE</span><br>
+                                    <span id="detail-geo-lng">0.0000</span>
+                                </div>
+                                <div class="col-span-2">
+                                    <span class="text-gray-500">IATA ORIGIN</span><br>
+                                    <span id="detail-geo-origin">LON</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-900 text-indigo-300 p-4 rounded-lg font-mono text-xs overflow-auto h-32">
+                             <h4 class="text-white font-bold mb-2 uppercase tracking-wider border-b border-gray-700 pb-1">Raw Model Data</h4>
+                             <pre id="detail-raw-json">{}</pre>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 bg-indigo-900 text-indigo-100 p-6 rounded-lg font-mono text-sm">
+                        <p class="mb-2 font-bold text-white"># Internal Scoring Model</p>
+                        <p>> Score = (Safety_Norm * 0.4) + (Cost_Efficiency * 0.4) + (Weather_Fit * 0.2)</p>
+                        <p class="mt-2">> <span id="detail-description"></span></p>
+                    </div>
+
+                    <!-- Live Market Data -->
+                    <div class="mt-8 border-t pt-8">
+                        <h3 class="text-xl font-bold text-gray-900 mb-4"><i class="fas fa-chart-line text-indigo-600 mr-2"></i>Live Market Pricing</h3>
+                        <div id="extra-info">
+                            <!-- Injected by JS -->
+                        </div>
+                    </div>
+
+                    <div class="mt-8 text-center">
+                        <button onclick="hideDetails()" class="bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 font-semibold py-2 px-6 rounded-lg transition-colors">
+                            Back to Recommendations
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // City Search Logic
+        const originInput = document.getElementById('origin_city');
+        const resultsDropdown = document.getElementById('city-results');
+        const spinner = document.getElementById('city-search-spinner');
+        const selectionDisplay = document.getElementById('selected-city-display');
+        let searchTimeout;
+
+        originInput.addEventListener('input', (e) => {
+            const query = e.target.value;
+            clearTimeout(searchTimeout);
+            
+            if (query.length < 2) {
+                resultsDropdown.classList.add('hidden');
+                return;
+            }
+
+            spinner.classList.remove('hidden');
+            searchTimeout = setTimeout(async () => {
+                try {
+                    const res = await fetch(`/api/city-search?keyword=${encodeURIComponent(query)}`);
+                    const data = await res.json();
+                    
+                    resultsDropdown.innerHTML = '';
+                    if (data.length > 0) {
+                        resultsDropdown.classList.remove('hidden');
+                        data.forEach(city => {
+                            const div = document.createElement('div');
+                            div.className = "cursor-pointer select-none py-2 pl-3 pr-9 hover:bg-indigo-600 hover:text-white";
+                            div.innerHTML = `<span class="font-semibold">${city.name}</span> <span class="text-xs opacity-75">(${city.iata}) - ${city.country}</span>`;
+                            div.onclick = () => selectCity(city);
+                            resultsDropdown.appendChild(div);
+                        });
+                    } else {
+                        resultsDropdown.classList.add('hidden');
+                    }
+                } catch (err) {
+                    console.error('Search failed', err);
+                } finally {
+                    spinner.classList.add('hidden');
+                }
+            }, 500); // 500ms debounce
+        });
+
+        function selectCity(city) {
+            // Lock Selection
+            originInput.value = city.name;
+            originInput.classList.add('hidden');
+            resultsDropdown.classList.add('hidden');
+            
+            document.getElementById('selected-city-name').textContent = city.name;
+            document.getElementById('selected-city-code').textContent = city.iata;
+            selectionDisplay.classList.remove('hidden');
+            
+            // Store for submission
+            userOrigin = city.name; 
+        }
+
+        function clearCitySelection() {
+            originInput.value = '';
+            originInput.classList.remove('hidden');
+            selectionDisplay.classList.add('hidden');
+            originInput.focus();
+            userOrigin = '';
+        }
+
+        // Close dropdown if clicked outside
+        document.addEventListener('click', (e) => {
+            if (!originInput.contains(e.target) && !resultsDropdown.contains(e.target)) {
+                resultsDropdown.classList.add('hidden');
+            }
+        });
+
+        let currentRecommendations = [];
+        let userBudget = 0;
+        let userOrigin = 'London';
+        let logInterval;
+
+        const LOG_MESSAGES = [
+            "Initializing TravelRecommender Engine...",
+            "Loading destination vectors...",
+            "Connecting to Amadeus Flight API...",
+            "Resolving IATA codes for origin...",
+            "Fetching Numbeo Cost of Living Index...",
+            "Querying OpenWeatherMap for forecasts...",
+            "Analyzing safety protocols (Travel Advisory API)...",
+            "Running Random Forest Price Predictor...",
+            "Calculating distance matrices...",
+            "Optimizing budget constraints...",
+            "Filtering candidates by user preferences...",
+            "Applying Hybrid ML Scoring...",
+            "Finalizing recommendations..."
+        ];
+
+        function startLoadingUI() {
+            const loadingDiv = document.getElementById('loading');
+            const resultsDiv = document.getElementById('results');
+            const detailsDiv = document.getElementById('details-view');
+            const cmdOutput = document.getElementById('cmd-output');
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-percent');
+
+            // Reset UI
+            loadingDiv.classList.remove('hidden');
+            resultsDiv.classList.add('hidden');
+            detailsDiv.classList.add('hidden');
+            resultsDiv.innerHTML = '';
+            cmdOutput.innerHTML = '<div class="text-gray-500"># Starting process...</div>';
+            progressBar.style.width = '0%';
+            progressText.textContent = '0%';
+
+            let step = 0;
+            const totalSteps = LOG_MESSAGES.length;
+            
+            clearInterval(logInterval);
+            logInterval = setInterval(() => {
+                if (step >= totalSteps) {
+                    // Keep pulsing at 90% if still waiting
+                    if (parseFloat(progressBar.style.width) < 90) {
+                        progressBar.style.width = '95%';
+                        progressText.textContent = '95%';
+                        addLogLine("Waiting for server response...");
+                    }
+                    return;
+                }
+
+                // Update Progress
+                const percent = Math.round(((step + 1) / totalSteps) * 90);
+                progressBar.style.width = `${percent}%`;
+                progressText.textContent = `${percent}%`;
+
+                // Add Log
+                addLogLine(LOG_MESSAGES[step]);
+                step++;
+
+            }, 400); // New log every 400ms
+        }
+
+        function addLogLine(text) {
+            const cmdOutput = document.getElementById('cmd-output');
+            const line = document.createElement('div');
+            const timestamp = new Date().toISOString().split('T')[1].split('.')[0];
+            line.innerHTML = `<span class="text-gray-500">[${timestamp}]</span> ${text}`;
+            cmdOutput.appendChild(line);
+            cmdOutput.scrollTop = cmdOutput.scrollHeight;
+        }
+
+        function stopLoadingUI() {
+            clearInterval(logInterval);
+            const progressBar = document.getElementById('progress-bar');
+            const progressText = document.getElementById('progress-percent');
+            
+            progressBar.style.width = '100%';
+            progressText.textContent = '100%';
+            addLogLine("Process complete. Rendering results.");
+            
+            // Short delay to show 100%
+            return new Promise(r => setTimeout(r, 500));
+        }
+
+        document.getElementById('recommendation-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData.entries());
+            userBudget = parseFloat(data.budget) || 1000;
+            
+            // Start Loading Animation
+            startLoadingUI();
+
+            try {
+                const response = await fetch('/api/recommend', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await response.json();
+                
+                await stopLoadingUI();
+                document.getElementById('loading').classList.add('hidden');
+
+                // Handle new response structure
+                const recommendations = result.recommendations || [];
+                const analysis = result.analysis || {};
+
+                if (recommendations.length === 0) {
+                    displayNoResults(analysis);
+                } else {
+                    currentRecommendations = recommendations;
+                    displayResults(recommendations);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                addLogLine("CRITICAL ERROR: Connection Failed.");
+                alert('Failed to fetch recommendations. Please try again.');
+                document.getElementById('loading').classList.add('hidden');
+            }
+        });
+
+        function displayNoResults(analysis) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.classList.remove('hidden');
+            
+            let message = `
+                <div class="col-span-1 md:col-span-2 bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded-md shadow-sm">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="fas fa-exclamation-triangle text-yellow-400 text-2xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <h3 class="text-lg font-medium text-yellow-800">No destinations found</h3>
+                            <div class="mt-2 text-yellow-700">
+                                <p class="mb-2">We couldn't find any destinations matching your criteria.</p>
+                                <ul class="list-disc list-inside text-sm space-y-1">
+            `;
+
+            if (analysis.rejected_budget > 0) {
+                message += `<li><strong>Budget Constraint:</strong> ${analysis.rejected_budget} destinations were rejected because they exceeded your budget of ${analysis.user_budget} ${analysis.currency}.</li>`;
+                if (analysis.min_cost_found > 0) {
+                    message += `<li><strong>Reality Check:</strong> The cheapest option we found was <strong>${analysis.min_cost_found} ${analysis.currency}</strong>.</li>`;
+                }
+            }
+            
+            if (analysis.continent_message) {
+                message += `<li><strong>Region:</strong> ${analysis.continent_message}</li>`;
+            }
+
+            message += `
+                                </ul>
+                                <p class="mt-3 font-semibold">Suggestion: Try increasing your budget or shortening your trip duration.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            resultsDiv.innerHTML = message;
+        }
+
+        function displayResults(recommendations) {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.classList.remove('hidden');
+
+            recommendations.forEach((rec, index) => {
+                const card = `
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+                        <div class="p-6">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h3 class="text-xl font-bold text-gray-900">${rec.city}, ${rec.country}</h3>
+                                    <p class="text-sm text-indigo-600 font-medium">${rec.weather} • Safety: ${rec.safety_score}/5</p>
+                                </div>
+                                <div class="text-right">
+                                    <span class="block bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded">~${rec.estimated_cost} ${rec.currency}</span>
+                                    <span class="block mt-1 text-xs font-bold text-indigo-600">Match: ${rec.ml_score}%</span>
+                                </div>
+                            </div>
+                            <p class="mt-4 text-gray-600 text-sm leading-relaxed">${rec.description}</p>
+                            <div class="mt-6">
+                                <button onclick="showDetails(${index})" class="w-full bg-indigo-50 text-indigo-700 font-semibold py-2 rounded-lg hover:bg-indigo-100 transition-colors">
+                                    View Details
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                resultsDiv.innerHTML += card;
+            });
+        }
+
+        async function showDetails(index) {
+            const rec = currentRecommendations[index];
+            const detailsView = document.getElementById('details-view');
+            const resultsView = document.getElementById('results');
+            
+            // Populate Data
+            document.getElementById('detail-city').textContent = rec.city;
+            document.getElementById('detail-country').textContent = rec.country;
+            document.getElementById('detail-score').textContent = rec.ml_score + '%';
+            document.getElementById('detail-description').textContent = rec.description;
+            
+            // Toggle Views first so user sees progress
+            resultsView.classList.add('hidden');
+            detailsView.classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Fetch Extra Info (Flights/Hotels)
+            const extraSection = document.getElementById('extra-info');
+            extraSection.innerHTML = '<div class="flex justify-center p-4"><div class="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div></div>';
+            
+            try {
+                const response = await fetch('/api/extra-details', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({ 
+                        city: rec.city, 
+                        country_code: rec.country_code,
+                        origin_city: userOrigin
+                    })
+                });
+                const extra = await response.json();
+                
+                let extraHtml = '<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-4">';
+                
+                // Flights
+                const originCode = extra.origin_iata || 'LON';
+                extraHtml += `<div><h4 class="font-bold mb-2"><i class="fas fa-plane mr-2"></i>Live Flight Estimates</h4>`;
+                if (extra.flights && extra.flights.length > 0) {
+                    extra.flights.forEach(f => {
+                        extraHtml += `<div class="bg-white p-3 rounded border mb-2 text-sm flex justify-between">
+                            <span>${originCode} ➔ ${f.itineraries[0].segments[0].arrival.iataCode}</span>
+                            <span class="font-bold text-indigo-600">${f.price.total} ${f.price.currency}</span>
+                        </div>`;
+                    });
+                } else {
+                    extraHtml += `<p class="text-xs text-gray-500 italic">No live flights found from ${originCode} (check API keys).</p>`;
+                }
+                extraHtml += `</div>`;
+
+                // Hotels
+                extraHtml += `<div><h4 class="font-bold mb-2"><i class="fas fa-hotel mr-2"></i>Hotel Suggestions</h4>`;
+                if (extra.hotels && extra.hotels.length > 0) {
+                    extra.hotels.forEach(h => {
+                        extraHtml += `<div class="bg-white p-3 rounded border mb-2 text-sm">
+                            <div class="font-bold">${h.hotel_name}</div>
+                            <div class="text-xs text-gray-500">${h.review_score}★ • ${h.min_total_price} ${h.currency}</div>
+                        </div>`;
+                    });
+                } else {
+                    extraHtml += `<p class="text-xs text-gray-500 italic">No hotel data found (check RapidAPI key).</p>`;
+                }
+                extraHtml += `</div></div>`;
+                
+                extraSection.innerHTML = extraHtml;
+            } catch (e) {
+                extraSection.innerHTML = '<p class="text-red-500">Failed to load live pricing.</p>';
+            }
+
+            // Safety
+            document.getElementById('detail-safety-raw').textContent = rec.safety_raw;
+            document.getElementById('detail-safety-norm').textContent = rec.safety_score + '/5';
+            
+            // Cost
+            document.getElementById('detail-cost').textContent = rec.estimated_cost + ' ' + rec.currency;
+            const utilization = Math.round((rec.estimated_cost / userBudget) * 100);
+            const utilizationEl = document.getElementById('detail-budget-use');
+            utilizationEl.textContent = utilization + '%';
+            utilizationEl.className = utilization > 100 ? 'font-mono font-bold text-red-600' : 'font-mono font-bold text-green-600';
+
+            // Cost Breakdown
+            const flightCost = rec.flight_cost_est || 0;
+            const totalCost = rec.estimated_cost || 0;
+            const dailyCost = totalCost - flightCost; // Approximation
+            document.getElementById('detail-cost-flight').textContent = flightCost + ' ' + rec.currency;
+            document.getElementById('detail-cost-daily').textContent = dailyCost + ' ' + rec.currency;
+
+            // Geospatial & Tech
+            document.getElementById('detail-geo-lat').textContent = rec.lat ? rec.lat.toFixed(4) : 'N/A';
+            document.getElementById('detail-geo-lng').textContent = rec.lng ? rec.lng.toFixed(4) : 'N/A';
+            // We'll update origin later when fetching extras or use userOrigin global
+            document.getElementById('detail-geo-origin').textContent = userOrigin.toUpperCase(); 
+
+            // Raw JSON
+            // Create a clean copy without UI-heavy description
+            const rawData = { ...rec };
+            delete rawData.description; 
+            document.getElementById('detail-raw-json').textContent = JSON.stringify(rawData, null, 2);
+
+            // Weather
+            document.getElementById('detail-weather-desc').textContent = rec.weather;
+            const idealTemp = 25;
+            const currentTemp = rec.weather_temp || 20;
+            const deviation = Math.round(Math.abs(currentTemp - idealTemp) * 10) / 10;
+            document.getElementById('detail-weather-dev').textContent = deviation + '°C';
+        }
+
+        function hideDetails() {
+            document.getElementById('details-view').classList.add('hidden');
+            document.getElementById('results').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
